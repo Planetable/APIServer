@@ -10,11 +10,15 @@ struct Result: Codable {
 }
 
 func routes(_ app: Application) throws {
-    app.get { req async in
-        "ENS API maintained by <a href='https://planetable.xyz'>Planetable</a>"
+    app.get { req async -> Response in
+        let html = "ENS API maintained by <a href='https://planetable.xyz'>Planetable</a>"
+        
+        var headers = HTTPHeaders()
+        headers.add(name: .contentType, value: "text/html")
+        return Response(status: .ok, headers: headers, body: .init(string: html))
     }
 
-    app.get("resolve", ":query") { req async -> String in
+    app.get("ens", "resolve", ":query") { req async -> Response in
         let query = req.parameters.get("query")!
         let normalized = query.lowercased()
         
@@ -49,7 +53,7 @@ func routes(_ app: Application) throws {
             name = normalized
             if let name = name, let resolver = try? await enskit.resolver(name: name) {
                 if let resolvedAddress = try? await resolver.addr() {
-                    address = "0x" + resolvedAddress
+                    address = "0x" + resolvedAddress.lowercased()
                     displayName = name
                     if let resolver = try? await enskit.resolver(name: name) {
                         if let avatar = try? await resolver.getAvatar(),
@@ -63,16 +67,26 @@ func routes(_ app: Application) throws {
                 }
             }
         }
-        let result = Result(address: address, name: name, displayName: displayName, avatar: avatarURLString, contentHash: contentHash)
-        do {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            let jsonData = try encoder.encode(result)
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                return jsonString
-            }
-        } catch {
+        if displayName == nil,
+           let address = address,
+           address.count == 42 {
+            displayName = String(address.prefix(5)) + "…" + String(address.suffix(4))
         }
-        return ""
+        let result = Result(address: address, name: name, displayName: displayName, avatar: avatarURLString, contentHash: contentHash)
+        let json: String = {
+            do {
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted
+                let jsonData = try encoder.encode(result)
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    return jsonString
+                }
+            } catch {
+            }
+            return "{}"
+        }()
+        var headers = HTTPHeaders()
+        headers.add(name: .contentType, value: "application/json")
+        return Response(status: .ok, headers: headers, body: .init(string: json))
     }
 }
