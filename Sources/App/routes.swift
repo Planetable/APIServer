@@ -1,7 +1,7 @@
 import ENSKit
 import Vapor
 import NullCodable
-import Web3
+import web3
 
 struct Result: Codable {
     @NullCodable var address: String?

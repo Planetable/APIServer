@@ -20,7 +20,7 @@ let package = Package(
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "ENSKit", package: "enskit"),
                 .product(name: "NullCodable", package: "nullcodable"),
-                .product(name: "Web3", package: "web3.swift"),
+                .product(name: "web3.swift", package: "web3.swift"),
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
