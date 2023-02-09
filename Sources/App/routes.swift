@@ -1,12 +1,14 @@
 import ENSKit
 import Vapor
+import NullCodable
+import Web3
 
 struct Result: Codable {
-    let address: String?
-    let name: String?
-    let displayName: String?
-    let avatar: String?
-    let contentHash: String?
+    @NullCodable var address: String?
+    @NullCodable var name: String?
+    @NullCodable var displayName: String?
+    @NullCodable var avatar: String?
+    @NullCodable var contentHash: String?
 }
 
 func routes(_ app: Application) throws {
@@ -33,6 +35,8 @@ func routes(_ app: Application) throws {
         // query is an address
         if normalized.hasPrefix("0x") && normalized.count == 42 {
             address = normalized
+
+            // TODO: Get a checksummed address
             
             if let address = address, let resolvedName = await enskit.name(addr: address) {
                 name = resolvedName
@@ -73,19 +77,20 @@ func routes(_ app: Application) throws {
             displayName = String(address.prefix(5)) + "…" + String(address.suffix(4))
         }
         let result = Result(address: address, name: name, displayName: displayName, avatar: avatarURLString, contentHash: contentHash)
+        var headers = HTTPHeaders()
         let json: String = {
             do {
                 let encoder = JSONEncoder()
                 encoder.outputFormatting = .prettyPrinted
                 let jsonData = try encoder.encode(result)
                 if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    headers.add(name: "Cloudflare-CDN-Cache-Control", value: "max-age=600")
                     return jsonString
                 }
             } catch {
             }
             return "{}"
         }()
-        var headers = HTTPHeaders()
         headers.add(name: .contentType, value: "application/json")
         return Response(status: .ok, headers: headers, body: .init(string: json))
     }

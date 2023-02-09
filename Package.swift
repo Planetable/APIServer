@@ -10,6 +10,8 @@ let package = Package(
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
         .package(url: "https://github.com/planetable/enskit.git", branch: "main"),
+        .package(url: "https://github.com/g-mark/nullcodable.git", branch: "master"),
+        .package(url: "https://github.com/argentlabs/web3.swift.git", from: "1.4.1")
     ],
     targets: [
         .target(
@@ -17,6 +19,8 @@ let package = Package(
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "ENSKit", package: "enskit"),
+                .product(name: "NullCodable", package: "nullcodable"),
+                .product(name: "Web3", package: "web3.swift"),
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of

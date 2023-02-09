@@ -55,6 +55,15 @@
       }
     },
     {
+      "identity" : "generic-json-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/iwill/generic-json-swift",
+      "state" : {
+        "revision" : "0a06575f4038b504e78ac330913d920f1630f510",
+        "version" : "2.0.2"
+      }
+    },
+    {
       "identity" : "multipart-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/multipart-kit.git",
@@ -64,12 +73,30 @@
       }
     },
     {
+      "identity" : "nullcodable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/g-mark/nullcodable.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "dcdda8a5b079827f65e283ab7c29d5caae4caf89"
+      }
+    },
+    {
       "identity" : "routing-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/routing-kit.git",
       "state" : {
         "revision" : "ffac7b3a127ce1e85fb232f1a6271164628809ad",
         "version" : "4.6.0"
+      }
+    },
+    {
+      "identity" : "secp256k1.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GigaBitcoin/secp256k1.swift.git",
+      "state" : {
+        "revision" : "48fb20fce4ca3aad89180448a127d5bc16f0e44c",
+        "version" : "0.10.0"
       }
     },
     {
@@ -214,6 +241,15 @@
       "state" : {
         "revision" : "7b76fe01a8eb02aa7f61d9ca10624f98b25a5735",
         "version" : "4.69.2"
+      }
+    },
+    {
+      "identity" : "web3.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/argentlabs/web3.swift.git",
+      "state" : {
+        "revision" : "3c4d4a52564faf1f9be5d728cdf7abfcd46d9914",
+        "version" : "1.4.1"
       }
     },
     {
