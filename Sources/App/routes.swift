@@ -9,6 +9,7 @@ struct Result: Codable {
     @NullCodable var displayName: String?
     @NullCodable var avatar: String?
     @NullCodable var contentHash: String?
+    var juiceboxProjectID: String?
 }
 
 func routes(_ app: Application) throws {
@@ -29,6 +30,7 @@ func routes(_ app: Application) throws {
         var displayName: String? = nil
         var avatarURLString: String? = nil
         var contentHash: String? = nil
+        var juiceboxProjectID: String? = nil
         
         let enskit = ENSKit()
         
@@ -49,6 +51,9 @@ func routes(_ app: Application) throws {
                     if let contentHashURL = try? await resolver.contenthash() {
                         contentHash = contentHashURL.absoluteString
                     }
+                    if let juiceboxProjectIDString = try? await resolver.text(key: "juicebox_project_id") {
+                        juiceboxProjectID = juiceboxProjectIDString
+                    }
                 }
             }
         }
@@ -67,6 +72,9 @@ func routes(_ app: Application) throws {
                         if let contentHashURL = try? await resolver.contenthash() {
                             contentHash = contentHashURL.absoluteString
                         }
+                        if let juiceboxProjectIDString = try? await resolver.text(key: "juicebox_project_id") {
+                            juiceboxProjectID = juiceboxProjectIDString
+                        }
                     }
                 }
             }
@@ -76,7 +84,7 @@ func routes(_ app: Application) throws {
            address.count == 42 {
             displayName = String(address.prefix(5)) + "…" + String(address.suffix(4))
         }
-        let result = Result(address: address, name: name, displayName: displayName, avatar: avatarURLString, contentHash: contentHash)
+        let result = Result(address: address, name: name, displayName: displayName, avatar: avatarURLString, contentHash: contentHash, juiceboxProjectID: juiceboxProjectID)
         var headers = HTTPHeaders()
         let json: String = {
             do {
