@@ -11,5 +11,11 @@ final class AppTests: XCTestCase {
             XCTAssertEqual(res.status, .ok)
             XCTAssertContains(res.body.string, "6045")
         })
+
+        try app.test(.GET, "ens/resolve/jango.eth", afterResponse: { res in
+            XCTAssertEqual(res.status, .ok)
+            XCTAssertContains(res.body.string, "juiceboxProjectID")
+            XCTAssertContains(res.body.string, "55")
+        })
     }
 }
