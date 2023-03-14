@@ -97,7 +97,7 @@ func routes(_ app: Application) throws {
                 encoder.outputFormatting = .prettyPrinted
                 let jsonData = try encoder.encode(result)
                 if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    headers.add(name: "CDN-Cache-Control", value: "public, max-age=600")
+                    headers.add(name: "CDN-Cache-Control", value: "public, stale-while-revalidate=8640000, max-age=600")
                     return jsonString
                 }
             } catch {
