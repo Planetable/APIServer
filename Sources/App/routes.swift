@@ -84,6 +84,11 @@ func routes(_ app: Application) throws {
            address.count == 42 {
             displayName = String(address.prefix(5)) + "…" + String(address.suffix(4))
         }
+        if avatarURLString != nil, let avatar = avatarURLString {
+            if avatar.hasPrefix("ipfs://ipfs/") {
+                avatarURLString = "https://ipfs.io/ipfs/" + avatar.replacingOccurrences(of: "ipfs://ipfs/", with: "")
+            }
+        }
         let result = Result(address: address, name: name, displayName: displayName, avatar: avatarURLString, contentHash: contentHash, juiceboxProjectID: juiceboxProjectID)
         var headers = HTTPHeaders()
         let json: String = {
