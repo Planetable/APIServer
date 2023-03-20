@@ -18,8 +18,20 @@ enum CustomError: Error {
     case unexpectedResponseFormat
 }
 
-func getNamesFromSubgraph(address: String) async throws -> [String] {
-    let urlString = "https://api.thegraph.com/subgraphs/name/ensdomains/ens"
+enum EthereumNetwork: String {
+    case mainnet = "mainnet"
+    case goerli = "goerli"
+}
+
+func getNamesFromSubgraph(address: String, network: EthereumNetwork = .mainnet) async throws -> [String] {
+    let urlString = {
+        switch network {
+        case .mainnet:
+            return "https://api.thegraph.com/subgraphs/name/ensdomains/ens"
+        case .goerli:
+            return "https://api.thegraph.com/subgraphs/name/ensdomains/ensgoerli"
+        }
+    }()
     guard let url = URL(string: urlString) else {
         throw CustomError.invalidURL
     }
@@ -30,6 +42,7 @@ func getNamesFromSubgraph(address: String) async throws -> [String] {
     request.addValue("https://app.ens.domains", forHTTPHeaderField: "origin")
     request.addValue("https://app.ens.domains/", forHTTPHeaderField: "referer")
 
+    // TODO: A new query is needed for Goerli and the new NameWrapper contract
     let query = """
         query getNamesFromSubgraph($address: String!) {
             domains(first: 1000, where: {owner: $address}) {
@@ -85,6 +98,39 @@ func routes(_ app: Application) throws {
 
         do {
             let domainNames = try await getNamesFromSubgraph(address: addr.lowercased())
+            print("Domain names: \(domainNames)")
+            if let data = try? JSONEncoder().encode(domainNames),
+                let str = String(data: data, encoding: .utf8)
+            {
+                output = str
+            }
+        }
+        catch {
+            print("Error: \(error.localizedDescription)")
+        }
+
+        headers.add(name: .contentType, value: "application/json")
+        return Response(status: .ok, headers: headers, body: .init(string: output))
+    }
+
+    app.get("ens", "list-goerli", ":addr") { req async -> Response in
+        var output: String = "[]"
+        var headers = HTTPHeaders()
+
+        var addr: String = req.parameters.get("addr")!
+
+        // If addr is an ENS name, resolve it to an address
+        if addr.hasSuffix(".eth") {
+            let enskit = ENSKit()
+            if let resolver = try? await enskit.resolver(name: addr) {
+                if let resolvedAddress = try? await resolver.addr() {
+                    addr = "0x" + resolvedAddress.lowercased()
+                }
+            }
+        }
+
+        do {
+            let domainNames = try await getNamesFromSubgraph(address: addr.lowercased(), network: .goerli)
             print("Domain names: \(domainNames)")
             if let data = try? JSONEncoder().encode(domainNames),
                 let str = String(data: data, encoding: .utf8)
