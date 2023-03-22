@@ -235,7 +235,7 @@ func routes(_ app: Application) throws {
         let json: String = {
             do {
                 let encoder = JSONEncoder()
-                encoder.outputFormatting = .prettyPrinted
+                encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
                 let jsonData = try encoder.encode(result)
                 if let jsonString = String(data: jsonData, encoding: .utf8) {
                     headers.add(
