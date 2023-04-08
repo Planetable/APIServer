@@ -192,21 +192,18 @@ func routes(_ app: Application) throws {
                 if let resolvedAddress = try? await resolver.addr() {
                     address = "0x" + resolvedAddress.lowercased()
                     displayName = name
-                    if let resolver = try? await enskit.resolver(name: name) {
-                        if let avatar = try? await resolver.getAvatar(),
-                            let avatarURL = try? await resolver.getAvatarImageURL(from: avatar)
-                        {
-                            avatarURLString = avatarURL.absoluteString
-                        }
-                        if let contentHashURL = try? await resolver.contenthash() {
-                            contentHash = contentHashURL.absoluteString
-                        }
-                        if let juiceboxProjectIDString = try? await resolver.text(
-                            key: "juicebox_project_id"
-                        ) {
-                            juiceboxProjectID = juiceboxProjectIDString
-                        }
-                    }
+                }
+                if let avatar = try? await resolver.getAvatar(),
+                    let avatarURL = try? await resolver.getAvatarImageURL(from: avatar) {
+                    avatarURLString = avatarURL.absoluteString
+                }
+                if let contentHashURL = try? await resolver.contenthash() {
+                    contentHash = contentHashURL.absoluteString
+                }
+                if let juiceboxProjectIDString = try? await resolver.text(
+                    key: "juicebox_project_id"
+                ) {
+                    juiceboxProjectID = juiceboxProjectIDString
                 }
             }
         }
