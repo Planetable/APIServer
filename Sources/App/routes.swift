@@ -157,7 +157,7 @@ func routes(_ app: Application) throws {
         var contentHash: String? = nil
         var juiceboxProjectID: String? = nil
 
-        let enskit = ENSKit()
+        let enskit = ENSKit(jsonrpcClient: EthereumAPI.Flashbots)
 
         // query is an address
         if normalized.hasPrefix("0x") && normalized.count == 42 {
