@@ -169,11 +169,6 @@ func routes(_ app: Application) throws {
                 name = resolvedName
                 displayName = name
                 if let resolver = try? await enskit.resolver(name: resolvedName) {
-                    if let avatar = try? await resolver.getAvatar(),
-                        let avatarURL = try? await resolver.getAvatarImageURL(from: avatar)
-                    {
-                        avatarURLString = avatarURL.absoluteString
-                    }
                     if let contentHashURL = try? await resolver.contenthash() {
                         contentHash = contentHashURL.absoluteString
                     }
