@@ -193,10 +193,6 @@ func routes(_ app: Application) throws {
                     address = "0x" + resolvedAddress.lowercased()
                     displayName = name
                 }
-                if let avatar = try? await resolver.getAvatar(),
-                    let avatarURL = try? await resolver.getAvatarImageURL(from: avatar) {
-                    avatarURLString = avatarURL.absoluteString
-                }
                 if let contentHashURL = try? await resolver.contenthash() {
                     contentHash = contentHashURL.absoluteString
                 }
@@ -212,12 +208,9 @@ func routes(_ app: Application) throws {
             address.count == 42
         {
             displayName = String(address.prefix(5)) + "…" + String(address.suffix(4))
-        }
-        if avatarURLString != nil, let avatar = avatarURLString {
-            if avatar.hasPrefix("ipfs://ipfs/") {
-                avatarURLString =
-                    "https://ipfs.io/ipfs/"
-                    + avatar.replacingOccurrences(of: "ipfs://ipfs/", with: "")
+        } else {
+            if let name = name {
+                avatarURLString = "https://metadata.ens.domains/mainnet/avatar/" + name
             }
         }
         let result = Result(
