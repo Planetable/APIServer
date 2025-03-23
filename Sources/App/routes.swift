@@ -184,6 +184,7 @@ func routes(_ app: Application) throws {
         if normalized.hasSuffix(".eth") {
             name = normalized
             if let name = name, let resolver = try? await enskit.resolver(name: name) {
+                debugPrint("Resolver found for name: \(name) \(resolver)")
                 if let resolvedAddress = try? await resolver.addr() {
                     address = "0x" + resolvedAddress.lowercased()
                     displayName = name
@@ -196,6 +197,8 @@ func routes(_ app: Application) throws {
                 ) {
                     juiceboxProjectID = juiceboxProjectIDString
                 }
+            } else {
+                debugPrint("Resolver not found for name: \(name ?? "")")
             }
         }
         if displayName == nil,
